@@ -22,9 +22,9 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ inputs.ROLE_TO_ASSUME }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ vars.ROLE_TO_ASSUME }}
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
-          aws-region: ${{ inputs.AWS_REGION }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -42,7 +42,7 @@ jobs:
         shell: bash
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ inputs.ECR_REPO_NAME }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPO_NAME }}
           IMAGE_TAG: ${{ github.sha }} # ${{ env.RELEASE_VERSION }}
         run: |
           docker compose -f docker-compose.yml build
