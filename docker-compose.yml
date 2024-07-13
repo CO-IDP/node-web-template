@@ -7,8 +7,7 @@ services:
       dockerfile: ./infrastructure/docker/${NODE_ENV}/Dockerfile
     ports:
       - "${PORT}:3000"
-    platforms:
-      - "linux/amd64"
+    platform: "linux/amd64"
     image: node-web-template
     environment:
       - NODE_ENV=${NODE_ENV}
