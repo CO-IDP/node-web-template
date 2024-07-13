@@ -1,4 +1,5 @@
 *
+!.env
 !src
 !package.json
 !package-lock.json
