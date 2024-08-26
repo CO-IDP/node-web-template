@@ -1,4 +1,4 @@
-FROM node:20.13.1-alpine@sha256:a7b980c958bfe4d84ee9263badd95a40c8bb50ad5afdb87902c187fefaef0e24 as builder
+FROM node:22-alpine@sha256:ed9736a13b88ba55cbc08c75c9edac8ae7f72840482e40324670b299336680c1 as builder
 
 WORKDIR /app
 COPY package*.json ./
@@ -8,10 +8,7 @@ RUN npm ci && npm run build \
             && rm -rf node_modules \
             && npm ci --only=production --ignore-scripts
 
-FROM node:20.5.1-alpine@sha256:f62abc08fe1004555c4f28b6793af8345a76230b21d2d249976f329079e2fef2 as final
-
-# ENV NODE_ENV "production"
-# ENV PORT 3000
+FROM node:22-alpine@sha256:ed9736a13b88ba55cbc08c75c9edac8ae7f72840482e40324670b299336680c1 as final
 
 WORKDIR /app
 COPY --chown=node:node --from=builder /app/package*.json ./
