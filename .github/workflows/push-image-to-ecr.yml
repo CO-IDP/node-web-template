@@ -43,6 +43,7 @@ jobs:
         id: build-publish
         shell: bash
         env:
+          NODE_ENV: production
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ vars.ECR_REPO_NAME }}
           IMAGE_TAG: ${{ github.sha }} # ${{ env.RELEASE_VERSION }}
