@@ -1,11 +1,8 @@
 name: Push the Docker image to AWS ECR Repo on new Release
 
-# on:
-#   release:
-#     types: [published]
 on:
-  push:
-    branches: [ main ]
+  release:
+    types: [published]
 
 permissions:
   id-token: write   # This is required for requesting the JWT
@@ -17,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -33,17 +30,18 @@ jobs:
           registries: ${{ secrets.AWS_ACCOUNT_ID }}
           mask-password: "true" # see: https://github.com/aws-actions/amazon-ecr-login#docker-credentials
 
-      # Get RELEASE_VERSION when release published. Note: update line 46
-      # - name: Set RELEASE_VERSION to Github env
-      #   run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      # Get RELEASE_VERSION when release published
+      - name: Set RELEASE_VERSION to Github env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-publish
         shell: bash
         env:
+          NODE_ENV: production
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ vars.ECR_REPO_NAME }}
-          IMAGE_TAG: ${{ github.sha }} # ${{ env.RELEASE_VERSION }}
+          IMAGE_TAG: ${{ env.RELEASE_VERSION }}
         run: |
           docker compose -f docker-compose.yml build
           docker tag "$ECR_REPOSITORY" "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
